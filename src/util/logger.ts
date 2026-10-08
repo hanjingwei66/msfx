@@ -49,20 +49,17 @@ class Logger {
     return LogLevel[this.level];
   }
 
-  private log(level: Level, message: unknown): void {
+  private log(level: Level, ...messages: unknown[]): void {
     if (LogLevel[level] > this.order) {
       return;
     }
     const date: string = getDate();
     const tag: string = level.toUpperCase();
+    const text = messages
+      .map(message => (typeof message === 'object' ? JSON.stringify(message, null, 2) : String(message)))
+      .join(' ');
 
-    // 数据类型转换
-    switch (true) {
-      case typeof message === 'object':
-        message = JSON.stringify(message, null, 2);
-        break;
-    }
-    console.log(`[${date}] [${tag}] - ${message}`);
+    console.log(`[${date}] [${tag}] - ${text}`);
   }
 
   public setLevel(level: Level): void {

@@ -1,7 +1,7 @@
 {
-  "name": "",
+  "name": "院内追溯",
   "appid": "",
-  "description": "",
+  "description": "院内药品拆零与追溯",
   "versionName": "1.0.0",
   "versionCode": "100",
   "transformPx": false,

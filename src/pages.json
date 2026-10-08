@@ -1,17 +1,22 @@
 {
-  // pages 数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
   "pages": [
     {
-      "path": "pages/home/HomeView",
+      "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": "uni-app"
+        "navigationBarTitleText": "工作台"
+      }
+    },
+    {
+      "path": "pages/service/index",
+      "style": {
+        "navigationBarTitleText": "服务"
       }
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
+    "navigationBarTitleText": "院内追溯",
     "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "backgroundColor": "#F4F6F8"
   }
 }

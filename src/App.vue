@@ -13,4 +13,14 @@
   });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+  page {
+    background: $uni-bg-color-grey;
+    color: $uni-text-color;
+    font-size: 28rpx;
+  }
+
+  button::after {
+    border: none;
+  }
+</style>

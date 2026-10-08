@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import uni from '@dcloudio/vite-plugin-uni';
-import { ConfigEnv, defineConfig, loadEnv, UserConfig } from 'vite';
+import { ConfigEnv, defineConfig, loadEnv, UserConfig, type ProxyOptions } from 'vite';
 
 /** 当前执行 node 命令时文件夹的地址（工作目录） */
 const root: string = process.cwd();
@@ -65,9 +65,40 @@ function wrapperEnv(envConf: Record<string, string>): Env {
 const alias: Record<string, string> = {
   '@': pathResolve('src'),
 };
+
+/**
+ * 按 VITE_*_URL 生成 H5 开发代理。
+ * 浏览器请求服务路径，由 dev server 转发到对应内网地址。
+ */
+function buildServiceProxy(env: Record<string, string>): Record<string, ProxyOptions> {
+  const proxy: Record<string, ProxyOptions> = {};
+
+  Object.entries(env).forEach(([key, value]) => {
+    if (!/^VITE_[A-Z0-9_]+_URL$/.test(key) || !/^https?:\/\//.test(value)) {
+      return;
+    }
+    try {
+      const url = new URL(value);
+      const pathname = url.pathname.replace(/\/$/, '');
+      if (!pathname || pathname === '/') {
+        return;
+      }
+      proxy[pathname] = {
+        target: url.origin,
+        changeOrigin: true,
+      };
+    } catch {
+      // 忽略无法解析的地址
+    }
+  });
+
+  return proxy;
+}
+
 const viteConfig = defineConfig((config: ConfigEnv): UserConfig => {
   const { mode } = config;
-  const { VITE_PUBLIC_PATH, VITE_PORT } = wrapperEnv(loadEnv(mode, root));
+  const env = loadEnv(mode, root);
+  const { VITE_PUBLIC_PATH, VITE_PORT } = wrapperEnv(env);
 
   return {
     base: VITE_PUBLIC_PATH,
@@ -80,7 +111,7 @@ const viteConfig = defineConfig((config: ConfigEnv): UserConfig => {
       port: VITE_PORT,
       host: '0.0.0.0',
       // 本地跨域代理
-      proxy: {},
+      proxy: buildServiceProxy(env),
     },
     plugins: [uni()],
     build: {
